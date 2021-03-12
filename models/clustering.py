@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+
 class kmeans:
 	def __init__(self, k=2, epslon=0.001):
 		self.k = k
@@ -14,7 +14,6 @@ class kmeans:
 		self.assignedClusters = np.zeros(X.shape[0])
 
 		while True :
-			# print(mean_)
 			for indx in range(X.shape[0]):
 				temp_distances = []
 				for key_ in mean_.keys():
@@ -27,47 +26,22 @@ class kmeans:
 			## UPDATING THE MEAN
 			for k_ in range(1,self.k+1):
 				mean_['Cluster_'+str(k_)] = np.mean(X[np.where(self.assignedClusters == k_)[0]],axis=0)
-			# print(mean_check, mean_)
 			diff = []
 			for ki in mean_.keys():
 				diff.append(np.linalg.norm(mean_check[ki] - mean_[ki]))
 			if sum(diff) <= self.epslon:
 			 	break
-			print('mean updated',diff)
+			
+	def accuracy(self, true_labels):
+		print('True clustes:\n',true_labels)
+		if min(true_labels)==0:
+			self.assignedClusters -= 1
+		print('Predicted Clusters\n',self.assignedClusters)
+		acc = 0
+		for indx, value in enumerate(self.assignedClusters):
+			if int(value) == int(true_labels[indx]):
+				acc += 1
+		return acc/len(true_labels)
 
-data = np.array([[1,1],
-				[1,2],
-				[0,0],
-				[2,2],
-				[1,3],
-				[2,1],
-				[4,3],
-				[4,4],
-				[4,5],
-				[5,3],
-				[5,4],
-				[5,5],
-				[6,4],
-				[-1,-1],
-				[6,5],
-				[5,-2],
-				[3,-2],
-				[4,-2],
-				[3,-1],
-				[4,-0],
-				[5,-1],
-				[0,1],
-				[5,1],
-				[0,2],
-				[3,3]]
-				)
-from sklearn.datasets import make_blobs
-features, true_labels = make_blobs(n_samples=2000, centers=3, cluster_std=1.75, random_state=42)
-data = features
-model = kmeans(k=3)
-model.fit(data)	
-clusters = np.array(model.assignedClusters)
 
-for i in range(1, model.k+1):
-	plt.scatter(data[np.where(clusters==i)[0]][:,0],data[np.where(clusters==i)[0]][:,1])
-plt.show()
+
