@@ -1,3 +1,31 @@
+from scipy.linalg import svd
+from scipy import linalg
+
+def Nystrom(data, gamma, kernel='rbf', n_components=100,k=100 seed=42):
+    
+    n_samples = data.shape[0]
+    if self.n_components > n_samples:
+        n_components = n_samples
+    k = min(k,n_components)
+    
+    rng = np.random.RandomState(seed)
+    idx = rng.choice(n_samples, n_components)
+    data_idx = data[idx]
+    data_idx_kernel = kernels(data_idx, kernel)## be careful, K(X,X)
+    
+    U, S, V = svd(data_idx_kernel)
+    U = U[:,:k]
+    S = S[:k]
+    V = V[:k,:]
+
+    M = np.dot(U, np.diag(1/np.sqrt(S)))
+    data_ = kernels(data, data_idx, kernel)
+    
+    data_new = np.dot(data_, M)
+    
+    return data_new
+
+
 import numpy as np
 from numpy import linalg
 
